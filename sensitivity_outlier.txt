@@ -1,0 +1,28 @@
+=== per-site influence on the primary gap (whitened - ambient) ===
+site   cases  site mean diff  gap w/o site                CI w/o site
+------------------------------------------------------------------------
+sv02       8         +0.0255       -0.0230   [-0.0807, +0.0013]
+sv03      15         +0.0048       -0.0234   [-0.0833, +0.0053]
+sv05      15         -0.0002       -0.0222   [-0.0826, +0.0065]
+sv07       7         +0.0007       -0.0197   [-0.0775, +0.0059]
+sv16       4         -0.0024       -0.0187   [-0.0727, +0.0058]
+sv23       4         -0.0012       -0.0188   [-0.0727, +0.0058]
+sv26       8         +0.0043       -0.0205   [-0.0774, +0.0054]
+sv27       4         +0.0040       -0.0191   [-0.0721, +0.0054]
+sv56       4         -0.0861       -0.0141   [-0.0657, +0.0077]
+sv61       3         -0.4102       -0.0017   [-0.0172, +0.0077]
+sv65       4         -0.0239       -0.0175   [-0.0733, +0.0071]
+
+FULL SAMPLE (11 sites, 76 cases): gap -0.0179  95% CI [-0.0694, +0.0053]
+
+Most influential site: sv61 (site mean diff -0.4102, 3 cases)
+  gap without it: -0.0017  95% CI [-0.0172, +0.0077]
+  -> CI includes zero without it: the effect does NOT survive removal
+
+sites favouring whitened (diff<0): 6/11
+sites favouring ambient  (diff>0): 5/11
+median site-level diff: -0.00021   (mean -0.04408)
+site-level sign test (whitened wins): 6/11, p = 0.5000
+
+trimmed (drop 1 each end) mean of site diffs: -0.01112
+  -> on the NLPD scale this is a 0.01112 nat difference

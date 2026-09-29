@@ -1,0 +1,44 @@
+specimens: 502  sites: 82
+sites with lines : 42
+sites with planes: 23
+
+--- per-site line scatter: eigenvalue structure of the orientation tensor ---
+site     n  k_fisher     a95  tau2/tau3   elong%
+sv02     4     127.0    8.18      51.64     86.1
+sv03     5      79.7    8.62      22.58     79.0
+sv04     5     285.8    4.53       4.93     54.9
+sv05     5     122.5    6.94       4.49     52.8
+sv07     7     293.9    3.53       2.35     34.8
+sv08     7     151.1    4.93       2.33     34.5
+sv09     5       9.5   26.17      10.42     69.0
+sv15     6     174.9    5.08      28.63     81.3
+sv16     4     184.0    6.79      38.88     84.0
+sv18     5     703.8    2.89       7.77     64.1
+sv23     4     584.2    3.80       7.86     64.3
+sv24     7     109.4    5.80      27.27     80.8
+sv26     4     103.2    9.09       1.22      9.6
+sv27     4     214.2    6.29       1.56     19.9
+sv31     5     394.0    3.86       4.33     51.9
+sv32     5     384.1    3.91       2.00     29.3
+sv51     4       2.2   84.31     296.11     94.2
+sv52     4     199.4    6.52      13.41     72.7
+sv54     5      30.4   14.10      69.27     88.0
+sv55     4     409.3    4.55       9.28     67.2
+sv56     4       3.0   64.64     212.56     93.1
+sv57     5      19.5   17.76      14.64     73.9
+sv58     4     569.7    3.85       7.34     63.1
+sv59     4    1128.1    2.74      10.72     69.5
+sv63     4     489.0    4.16       2.84     40.7
+sv64     6     172.4    5.12      73.03     88.3
+sv65     4      78.9   10.41      24.15     79.7
+
+tau2/tau3  median 10.42  max 296.11
+elongation median 69.0%  max 94.2%
+
+GATE: tau2/tau3 == 1 means circular scatter (isotropic).
+      Values well above 1 mean the error is anisotropic -> the two metrics differ.
+observed median elongation      : 69.0%
+isotropic-null median elongation: 52.2%  (95% range 41.4-62.6%)
+p-value (one-sided)             : 0.0008
+
+VERDICT: elongation EXCEEDS the isotropic null -> real anisotropy.
