@@ -62,15 +62,16 @@ REPO_ROOT = HERE.parent.parent
 OUT_PDF = REPO_ROOT / "paleomag_great_circle.pdf"
 OUT_JSON = HERE / "results.json"
 
-# Primary analysts: the only ones that decide the verdict. Order matters for reporting; do not reorder.
-ANALYSTS_PREREGISTERED = ("whitened", "ambient", "naive")
+# Primary analysts: the only ones that decide the verdict. Order matters for
+# reporting; do not reorder.
+ANALYSTS_PRIMARY = ("whitened", "ambient", "naive")
 
 # Exploratory analysts added 2026-09-18, after the primary result was reported. Both
 # instantiate the SAME selection rule as `whitened` with a better-conditioned estimate
 # of the anisotropy.
 ANALYSTS_EXPLORATORY = ("kent", "pooled")
 
-ANALYSTS = ANALYSTS_PREREGISTERED + ANALYSTS_EXPLORATORY
+ANALYSTS = ANALYSTS_PRIMARY + ANALYSTS_EXPLORATORY
 
 
 # --------------------------------------------------------------------------- #
@@ -665,13 +666,13 @@ def main():
     # The verdict is decided among the PRIMARY analysts only. Letting an exploratory
     # analyst win the primary comparison would convert a post-hoc addition into a
     # confirmatory result.
-    prereg_nlpd = {a: summary["mean_nlpd"][a] for a in ANALYSTS_PREREGISTERED}
-    best = min(prereg_nlpd, key=prereg_nlpd.get)
+    primary_nlpd = {a: summary["mean_nlpd"][a] for a in ANALYSTS_PRIMARY}
+    best = min(primary_nlpd, key=primary_nlpd.get)
     h1_supported = bool(best == "whitened" and primary["excludes_zero"])
     best_overall = min(summary["mean_nlpd"], key=summary["mean_nlpd"].get)
 
     print("\n--- mean NLPD (lower is better) ---")
-    for a in ANALYSTS_PREREGISTERED:
+    for a in ANALYSTS_PRIMARY:
         print(f"  {a:9s} {summary['mean_nlpd'][a]:8.4f}")
     for a in ANALYSTS_EXPLORATORY:
         print(f"  {a:9s} {summary['mean_nlpd'][a]:8.4f}   [exploratory]")
@@ -709,7 +710,7 @@ def main():
         "n_sites_total": len(sites),
         "n_sites_usable": len(usable),
         "n_loo_cases": len(records),
-        "analysts_preregistered": list(ANALYSTS_PREREGISTERED),
+        "analysts_primary": list(ANALYSTS_PRIMARY),
         "analysts_exploratory": list(ANALYSTS_EXPLORATORY),
         "summary": summary,
         "primary_comparison": primary,

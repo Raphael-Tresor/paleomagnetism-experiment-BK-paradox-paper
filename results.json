@@ -5,7 +5,7 @@
   "n_sites_total": 46,
   "n_sites_usable": 14,
   "n_loo_cases": 76,
-  "analysts_preregistered": [
+  "analysts_primary": [
     "whitened",
     "ambient",
     "naive"
