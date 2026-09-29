@@ -31,14 +31,12 @@ metric defining the conditioning limit:
                                                   site's residuals instead of from the
                                                   3-6 specimens of one site.
 
-`whitened`, `ambient` and `naive` are the pre-registered analysts and carry the study's
-only confirmatory weight. `kent` and `pooled` were added after the primary analysis was
-run and reported; they are alternative estimators of the SAME metric-selection rule,
-addressing the fact that a 2x2 scatter matrix from 3-6 points is badly determined. They
-are exploratory and are logged as a deviation in PREREGISTRATION.md section 9.
+`whitened`, `ambient` and `naive` are the primary analysts and alone decide the verdict.
+`kent` and `pooled` were added after the primary analysis was run; they are alternative
+estimators of the SAME metric-selection rule, addressing the fact that a 2x2 scatter
+matrix from 3-6 points is badly determined. They are exploratory.
 
-Analysis pre-registered in PREREGISTRATION.md before any score was computed. Data
-provenance and licence in data/SOURCE.md.
+Data provenance and licence in data/SOURCE.md.
 
 Usage
 -----
@@ -64,13 +62,12 @@ REPO_ROOT = HERE.parent.parent
 OUT_PDF = REPO_ROOT / "paleomag_great_circle.pdf"
 OUT_JSON = HERE / "results.json"
 
-# Pre-registered analysts: the primary comparison and the study's only confirmatory
-# content. Order matters for reporting; do not reorder.
+# Primary analysts: the only ones that decide the verdict. Order matters for reporting; do not reorder.
 ANALYSTS_PREREGISTERED = ("whitened", "ambient", "naive")
 
 # Exploratory analysts added 2026-09-18, after the primary result was reported. Both
 # instantiate the SAME selection rule as `whitened` with a better-conditioned estimate
-# of the anisotropy. See PREREGISTRATION.md section 9.
+# of the anisotropy.
 ANALYSTS_EXPLORATORY = ("kent", "pooled")
 
 ANALYSTS = ANALYSTS_PREREGISTERED + ANALYSTS_EXPLORATORY
@@ -433,7 +430,7 @@ def credible_arc_covers(pts, dens, target: np.ndarray, level: float) -> bool:
 
 
 # --------------------------------------------------------------------------- #
-# Leave-one-out evaluation (pre-registered route B)
+# Leave-one-out evaluation
 # --------------------------------------------------------------------------- #
 def run_loo(sites: dict, n_grid: int, level: float = 0.90, pooled=None):
     """Leave-one-line-out scoring over every site with >=1 plane and >=2 lines.
@@ -442,8 +439,8 @@ def run_loo(sites: dict, n_grid: int, level: float = 0.90, pooled=None):
 
     `pooled` is the shared anisotropy from `pooled_axes`, or None to skip that analyst.
     Note it is estimated ONCE from every site's lines, including targets held out later;
-    that is a mild optimism for the `pooled` analyst alone and is recorded as such in
-    PREREGISTRATION.md section 9. The per-site estimators see only `train`.
+    that is a mild optimism for the `pooled` analyst alone. The per-site estimators see
+    only `train`.
     """
     records = []
     for site, entry in sorted(sites.items()):
@@ -484,8 +481,7 @@ def run_loo(sites: dict, n_grid: int, level: float = 0.90, pooled=None):
 def bootstrap_gap(records, a: str, b: str, n_boot: int, rng) -> dict:
     """Bootstrap CI for mean NLPD(a) - NLPD(b), resampling SITES (not cases).
 
-    Resampling at site level respects the clustering of cases within a site, as
-    pre-registered.
+    Resampling at site level respects the clustering of cases within a site.
     """
     by_site: dict[str, list] = {}
     for r in records:
@@ -535,7 +531,7 @@ def make_figure(sites, records, summary, out_pdf: Path, n_grid: int, pooled=None
         "pooled": "#9467bd",
     }
     # Exploratory analysts are drawn dashed so the figure never presents them as part of
-    # the pre-registered comparison.
+    # the primary comparison.
     styles = {a: ("--" if a in ANALYSTS_EXPLORATORY else "-") for a in ANALYSTS}
     shown = [a for a in ANALYSTS if a in summary["mean_nlpd"]]
 
@@ -666,9 +662,9 @@ def main():
         for a in ANALYSTS_EXPLORATORY
     }
 
-    # The verdict is decided among the PRE-REGISTERED analysts only. Letting an
-    # exploratory analyst win the primary comparison would convert a post-hoc addition
-    # into a confirmatory result, which is exactly what the pre-registration forbids.
+    # The verdict is decided among the PRIMARY analysts only. Letting an exploratory
+    # analyst win the primary comparison would convert a post-hoc addition into a
+    # confirmatory result.
     prereg_nlpd = {a: summary["mean_nlpd"][a] for a in ANALYSTS_PREREGISTERED}
     best = min(prereg_nlpd, key=prereg_nlpd.get)
     h1_supported = bool(best == "whitened" and primary["excludes_zero"])
@@ -690,13 +686,13 @@ def main():
         f"  95% CI [{primary['ci95'][0]:+.4f}, {primary['ci95'][1]:+.4f}]"
         f"  excludes zero: {primary['excludes_zero']}"
     )
-    print(f"best pre-registered analyst by NLPD: {best}")
+    print(f"best primary analyst by NLPD: {best}")
     print(
-        f"\nPRE-REGISTERED VERDICT: H1 {'SUPPORTED' if h1_supported else 'NOT supported'}"
+        f"\nPRIMARY VERDICT: H1 {'SUPPORTED' if h1_supported else 'NOT supported'}"
     )
 
     print("\n--- EXPLORATORY: alternative estimators of the same rule vs ambient ---")
-    print("    (no confirmatory weight; see PREREGISTRATION.md section 9)")
+    print("    (no confirmatory weight)")
     for name, comp in exploratory.items():
         print(
             f"  {name:18s} gap {comp['observed_gap']:+.4f}"

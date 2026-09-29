@@ -54,8 +54,8 @@ Three different things, often confused:
 **To understand the data itself, none of the papers is the fastest route.** The column
 semantics are in the MagIC data model, and the one fact the experiment depends on — that a
 `DE-BFP` record's `(dec, inc)` is the **pole** to the plane, not a direction on it — was
-verified empirically by `../check_geometry.py` (planes sit 87.9° from their site mean,
-lines 5.0°). That check is more reliable than any prose description.
+verified empirically (planes sit 87.9° from their site mean, lines 5.0°). That check is
+more reliable than any prose description.
 
 ⚠️ **The 2003 paper will not reproduce our numbers.** The files state "Recalculated from
 original measurements; supercedes published results", so the values here differ from that
@@ -121,8 +121,8 @@ Column definitions, from `data_model.json`:
 
 ⚠️ **The data model does not state whether a `DE-BFP` record's `(dir_dec, dir_inc)` is
 the plane's pole or a direction lying on it.** The definition ("Specimen direction…") is
-written for the line case and is silent for planes. That is why
-`../check_geometry.py` establishes it empirically instead: planes sit **87.9°** from
+written for the line case and is silent for planes. It was therefore established
+empirically instead: planes sit **87.9°** from
 their site mean, lines **5.0°**, so the stored value is the **pole**. This is the single
 most load-bearing fact in the experiment and it rests on that measurement, not on
 documentation.
