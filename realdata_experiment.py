@@ -354,8 +354,13 @@ def posterior_on_circle(
       ambient   uniform arclength (the round metric's Hausdorff measure on the curve)
       whitened  reweighted by the anisotropic scatter, i.e. the Mahalanobis metric
                 induced by the site's own error ellipse
-      naive     uniform in the (dec, inc) chart, i.e. the arclength element of the flat
-                chart metric, which differs from the round one by 1/cos(inc)
+      naive     flat metric of the (inc, dec) chart, with the SAME Fisher prior. By the
+                paper's Definition 5 the posterior is the prior's density w.r.t. the
+                chart area (p * cos(inc)) times the chart arclength; w.r.t. round
+                arclength the reference factor is
+                cos(inc) * ds_chart / ds_round = sqrt(1 - sin(inc)^2 * inc'^2),
+                inc' = d inc / ds_round. This reproduces the paper's Proposition 16
+                (cos(inc) on a meridian, uniform on the equator).
       kent      as `whitened`, with the axes from Kent's FB5 moment estimator
       pooled    as `whitened`, with one anisotropy pooled across all sites
 
@@ -385,10 +390,22 @@ def posterior_on_circle(
         scale = np.sqrt(c1**2 / max(tau1, 1e-12) + c2**2 / max(tau2, 1e-12))
         log_ref = np.log(np.maximum(scale, 1e-300))
     elif analyst == "naive":
-        # Flat in (dec, inc): the chart's arclength element omits the cos(inc) factor
-        # that the round metric carries, so the reference density picks up 1/cos(inc).
-        inc = np.arcsin(np.clip(pts[:, 2], -1.0, 1.0))
-        log_ref = -np.log(np.maximum(np.cos(inc), 1e-12))
+        # Flat metric of the (inc, dec) chart with the shared prior: the prior's density
+        # w.r.t. chart area is p * cos(inc), and the chart arclength along the circle is
+        # ds_chart = sqrt(inc'^2 + dec'^2) ds_round. Their product, w.r.t. round
+        # arclength, is sqrt(1 - sin(inc)^2 * inc'^2). The previous version used
+        # 1/cos(inc), which drops the area Jacobian cos(inc) from the prior (Fisher
+        # formula read as a density in (dec, inc)); see the docstring above.
+        z = np.clip(pts[:, 2], -1.0, 1.0)
+        n = pole / np.linalg.norm(pole)
+        tangents = np.cross(n, pts)  # exact unit tangent of the great circle
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+        cos2 = np.maximum(1.0 - z**2, 1e-24)
+        dinc2 = np.minimum(tangents[:, 2] ** 2 / cos2, 1.0)  # (d inc / ds_round)^2
+        factor = np.sqrt(np.maximum(1.0 - z**2 * dinc2, 0.0))
+        # A circle reaches a pole only along a meridian, where the factor is cos(inc) = 0.
+        factor[1.0 - z**2 < 1e-20] = 0.0
+        log_ref = np.log(np.maximum(factor, 1e-300))
     else:
         raise ValueError(analyst)
 
